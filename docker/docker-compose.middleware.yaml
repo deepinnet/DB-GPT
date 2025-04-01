@@ -1,0 +1,32 @@
+services:
+  # The postgres database.
+  db-gpt-postgres:
+    container_name: db-gpt-postgres
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Shendu188
+      POSTGRES_DB: db-gpt-demo
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: >
+      postgres -c 'max_connections=${POSTGRES_MAX_CONNECTIONS:-100}'
+               -c 'shared_buffers=${POSTGRES_SHARED_BUFFERS:-128MB}'
+               -c 'work_mem=${POSTGRES_WORK_MEM:-4MB}'
+               -c 'maintenance_work_mem=${POSTGRES_MAINTENANCE_WORK_MEM:-64MB}'
+               -c 'effective_cache_size=${POSTGRES_EFFECTIVE_CACHE_SIZE:-4096MB}'
+    volumes:
+      - ./volumes/db/data:/var/lib/postgresql/data
+    ports:
+      - "${EXPOSE_POSTGRES_PORT:-7004}:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+networks:
+  default:
+    driver: bridge
+    #解决连接不稳定的问题
+    driver_opts:
+      com.docker.network.driver.mtu: "1430"

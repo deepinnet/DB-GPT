@@ -189,3 +189,6 @@ thirdparty
 configs/my
 .devcontainer/dev.toml
 test_docs
+
+./uv.lock
+/docker/volumes
